@@ -4,10 +4,9 @@ import (
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
+	"api/src/responses"
 	"encoding/json"
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -15,27 +14,33 @@ import (
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	requestBody, erro := io.ReadAll(r.Body) 
 	if erro != nil {
-		log.Fatal(erro)
+		responses.Error(w, http.StatusUnprocessableEntity, erro)
+		return
 	}
 
 	var user models.User
 	if erro = json.Unmarshal(requestBody, &user); erro != nil {
-		log.Fatal(erro)
+		responses.Error(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	db, erro := database.Connect()
 	if erro != nil {
-		log.Fatal(erro)
+		responses.Error(w, http.StatusInternalServerError, erro)
+		return
 	}
+	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 	userID, erro := repository.Create(user)
 	if erro != nil {
-		log.Fatal(erro)
+		responses.Error(w, http.StatusInternalServerError, erro)
+		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Id inserido: %d", userID)))
+	user.ID = userID
+
+	responses.JSON(w, http.StatusCreated, user)
 }
 
 // GetUsers gets all users in the database
