@@ -28,7 +28,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if erro = user.Prepare(); erro != nil {
+	if erro = user.Prepare("register"); erro != nil {
 		responses.Error(w, http.StatusBadRequest, erro)
 		return
 	}
@@ -67,6 +67,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, erro := repository.Get(nameOrNick)
 	if erro != nil {
 		responses.Error(w, http.StatusInternalServerError, erro)
+		return
 	}
 
 	responses.JSON(w, http.StatusOK, users)
@@ -79,11 +80,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	userID, erro := strconv.ParseUint(params["userId"], 10, 64)
 	if erro != nil {
 		responses.Error(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	db, erro := database.Connect()
 	if erro != nil {
 		responses.Error(w, http.StatusInternalServerError, erro)
+		return
 	}
 	defer db.Close()
 
@@ -91,6 +94,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	user, erro := repository.GetByID(userID)
 	if erro != nil {
 		responses.Error(w, http.StatusInternalServerError, erro)
+		return
 	}
 
 	responses.JSON(w, http.StatusOK, user)
@@ -98,7 +102,46 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser updates a user with specified id in the database
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Updating user..."))
+	params := mux.Vars(r)
+
+	userID, erro := strconv.ParseUint(params["userId"], 10, 64)
+	if erro != nil {
+		responses.Error(w, http.StatusBadRequest, erro)
+		return
+	}	
+
+	requestBody, erro := io.ReadAll(r.Body)
+	if erro != nil {
+		responses.Error(w, http.StatusUnprocessableEntity, erro)
+		return
+	}	
+
+	var user models.User
+	if erro = json.Unmarshal(requestBody, &user); erro != nil {
+		responses.Error(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	if erro = user.Prepare("edit"); erro != nil {
+		responses.Error(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Error(w, http.StatusInternalServerError, erro)
+		return 
+	}
+	defer db.Close()
+
+	repository := repositories.NewUsersRepository(db)
+
+	if erro = repository.Update(userID, user); erro != nil {
+		responses.Error(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
 }
 
 // DeleteUser deletes a user with specified id in the database

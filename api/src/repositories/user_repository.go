@@ -99,3 +99,18 @@ func (r Users) GetByID(userID uint64) (models.User, error) {
 
 	return user, nil
 }
+
+// Update alters the user informations in the database
+func (r Users) Update(userID uint64, user models.User) error {
+	statement, erro := r.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(user.Name, user.Nick, user.Email, userID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
