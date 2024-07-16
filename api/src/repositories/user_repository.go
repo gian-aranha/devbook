@@ -114,3 +114,18 @@ func (r Users) Update(userID uint64, user models.User) error {
 
 	return nil
 }
+
+// Delete removes the user with the received id from the database
+func (r Users) Delete(userID uint64) error {
+	statement, erro := r.db.Prepare("delete from users where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro := statement.Exec(userID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
