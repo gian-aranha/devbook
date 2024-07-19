@@ -100,6 +100,25 @@ func (r Users) GetByID(userID uint64) (models.User, error) {
 	return user, nil
 }
 
+// GetByEmail returns a user id and hashed password based on the received email
+func (r Users) GetByEmail(userEmail string) (models.User, error) {
+	line, erro := r.db.Query("select id, password from users where email = ?", userEmail)
+	if erro != nil {
+		return models.User{}, erro
+	}
+	defer line.Close()
+
+	var user models.User
+
+	if line.Next() {
+		if erro = line.Scan(&user.ID, &user.Password); erro != nil {
+			return models.User{}, erro
+		}
+	}
+
+	return user, nil
+}
+
 // Update alters the user informations in the database
 func (r Users) Update(userID uint64, user models.User) error {
 	statement, erro := r.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
