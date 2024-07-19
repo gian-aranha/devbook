@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"api/src/authentication"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
 	"api/src/security"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -45,6 +47,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responses.Error(w, http.StatusUnauthorized, erro)
 		return
 	}
+
+	token, _ := authentication.CreateToken(databaseUser.ID)
+	fmt.Println(token)
 
 	responses.JSON(w, http.StatusAccepted, "Successful login.")
 }

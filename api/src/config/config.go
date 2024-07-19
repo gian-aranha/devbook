@@ -12,8 +12,12 @@ import (
 var (
 	// DatabaseStringConnection is the string connection to MySQL
 	DatabaseStringConnection = ""
-	//Port where the API is working
+
+	// Port where the API is working
 	Port = 0
+
+	// SecretKey is the key that will be used to sign the token
+	SecretKey []byte
 )
 
 // Load initializes the environment variables
@@ -34,4 +38,6 @@ func Load() {
 	  	os.Getenv("DB_PASSWORD"),
 	   	os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
