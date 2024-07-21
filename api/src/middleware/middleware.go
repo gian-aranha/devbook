@@ -18,8 +18,8 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 // Authenticate verifies if the user that's making the request is authenticated
 func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if erro := authentication.ValidateToken(r); erro != nil {
-			responses.Error(w, http.StatusUnauthorized, erro)
+		if err := authentication.ValidateToken(r); err != nil {
+			responses.Error(w, http.StatusUnauthorized, err)
 			return
 		}
 		next(w, r)

@@ -9,14 +9,14 @@ import (
 
 // Connect opens the connection with the database and returns it
 func Connect() (*sql.DB, error) {
-	db, erro := sql.Open("mysql", config.DatabaseStringConnection)
-	if erro != nil {
-		return nil, erro
+	db, err := sql.Open("mysql", config.DatabaseStringConnection)
+	if err != nil {
+		return nil, err
 	}
 
-	if erro = db.Ping(); erro != nil {
+	if err = db.Ping(); err != nil {
 		db.Close()
-		return nil, erro
+		return nil, err
 	}
 
 	return db, nil

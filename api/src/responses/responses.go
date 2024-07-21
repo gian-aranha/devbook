@@ -12,17 +12,17 @@ func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.WriteHeader(statusCode)
 
 	if data != nil {
-		if erro := json.NewEncoder(w).Encode(data); erro != nil {
-			log.Fatal(erro)
+		if err := json.NewEncoder(w).Encode(data); err != nil {
+			log.Fatal(err)
 		}
 	}
 }
 
 // Error returns an error in JSON
-func Error(w http.ResponseWriter, statusCode int, erro error) {
+func Error(w http.ResponseWriter, statusCode int, err error) {
 	JSON(w, statusCode, struct {
 		Error string `json:"error"`
 	}{
-		Error: erro.Error(),
+		Error: err.Error(),
 	})
 }

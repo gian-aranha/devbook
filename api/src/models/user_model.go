@@ -21,12 +21,12 @@ type User struct {
 
 // Prepare calls validate and format methods to act uppon the received user
 func (user *User) Prepare(stage string) error {
-	if erro := user.validate(stage); erro != nil {
-		return erro
+	if err := user.validate(stage); err != nil {
+		return err
 	}
 
-	if erro := user.format(stage); erro != nil {
-		return erro
+	if err := user.format(stage); err != nil {
+		return err
 	}
 
 	return nil
@@ -45,7 +45,7 @@ func (user *User) validate(stage string) error {
 		return errors.New("the email is mandatory and can't be blank")
 	}
 
-	if erro := checkmail.ValidateFormat(user.Email); erro != nil {
+	if err := checkmail.ValidateFormat(user.Email); err != nil {
 		return errors.New("the inserted email is invalid")
 	}
 
@@ -62,9 +62,9 @@ func (user *User) format(stage string) error {
 	user.Email = strings.TrimSpace(user.Email)
 
 	if stage == "register" {
-		hashPassword, erro := security.Hash(user.Password)
-		if erro != nil {
-			return erro
+		hashPassword, err := security.Hash(user.Password)
+		if err != nil {
+			return err
 		}
 
 		user.Password = string(hashPassword)

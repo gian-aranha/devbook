@@ -18,20 +18,20 @@ func NewUsersRepository(db *sql.DB) *Users {
 
 // Create inserts a user in the database
 func (r Users) Create(user models.User) (uint64, error) {
-	statement, erro := r.db.Prepare("insert into users (name, nick, email, password) values (?, ?, ?, ?)")
-	if erro != nil {
-		return 0, erro
+	statement, err := r.db.Prepare("insert into users (name, nick, email, password) values (?, ?, ?, ?)")
+	if err != nil {
+		return 0, err
 	}
 	defer statement.Close()
 
-	result, erro := statement.Exec(user.Name, user.Nick, user.Email, user.Password)
-	if erro != nil {
-		return 0, erro
+	result, err := statement.Exec(user.Name, user.Nick, user.Email, user.Password)
+	if err != nil {
+		return 0, err
 	}
 
-	insertedID, erro := result.LastInsertId()
-	if erro != nil {
-		return 0, erro
+	insertedID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
 	}
 
 	return uint64(insertedID), nil
@@ -41,13 +41,13 @@ func (r Users) Create(user models.User) (uint64, error) {
 func (r Users) Get(nameOrNick string) ([]models.User, error) {
 	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick) // %nameOrNick%
 
-	lines, erro := r.db.Query(
+	lines, err := r.db.Query(
 		"select id, name, nick, email, created_at from users where name LIKE ? or nick LIKE ?",
 		nameOrNick, 
 		nameOrNick,
 	)
-	if erro != nil {
-		return nil , erro
+	if err != nil {
+		return nil , err
 	}
 	defer lines.Close()
 
@@ -56,14 +56,14 @@ func (r Users) Get(nameOrNick string) ([]models.User, error) {
 	for lines.Next() {
 		var user models.User
 
-		if erro = lines.Scan(
+		if err = lines.Scan(
 			&user.ID,
 			&user.Name,
 			&user.Nick,
 			&user.Email,
 			&user.CreatedAt,
-		); erro != nil {
-			return nil , erro
+		); err != nil {
+			return nil , err
 		}
 
 		users = append(users, user)
@@ -74,26 +74,26 @@ func (r Users) Get(nameOrNick string) ([]models.User, error) {
 
 // GetByID returns a user that attends to the id received
 func (r Users) GetByID(userID uint64) (models.User, error) {
-	lines, erro := r.db.Query(
+	lines, err := r.db.Query(
 		"select id, name, nick, email, created_at from users where id=?",
 		userID,
 	)
-	if erro != nil {
-		return models.User{}, erro
+	if err != nil {
+		return models.User{}, err
 	}
 	defer lines.Close()
 
 	var user models.User
 
 	if lines.Next() {
-		if erro = lines.Scan(
+		if err = lines.Scan(
 			&user.ID,
 			&user.Name,
 			&user.Nick,
 			&user.Email,
 			&user.CreatedAt,
-		); erro != nil {
-			return models.User{}, erro
+		); err != nil {
+			return models.User{}, err
 		}
 	}
 
@@ -102,17 +102,17 @@ func (r Users) GetByID(userID uint64) (models.User, error) {
 
 // GetByEmail returns a user id and hashed password based on the received email
 func (r Users) GetByEmail(userEmail string) (models.User, error) {
-	line, erro := r.db.Query("select id, password from users where email = ?", userEmail)
-	if erro != nil {
-		return models.User{}, erro
+	line, err := r.db.Query("select id, password from users where email = ?", userEmail)
+	if err != nil {
+		return models.User{}, err
 	}
 	defer line.Close()
 
 	var user models.User
 
 	if line.Next() {
-		if erro = line.Scan(&user.ID, &user.Password); erro != nil {
-			return models.User{}, erro
+		if err = line.Scan(&user.ID, &user.Password); err != nil {
+			return models.User{}, err
 		}
 	}
 
@@ -121,14 +121,14 @@ func (r Users) GetByEmail(userEmail string) (models.User, error) {
 
 // Update alters the user informations in the database
 func (r Users) Update(userID uint64, user models.User) error {
-	statement, erro := r.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
-	if erro != nil {
-		return erro
+	statement, err := r.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
+	if err != nil {
+		return err
 	}
 	defer statement.Close()
 
-	if _, erro = statement.Exec(user.Name, user.Nick, user.Email, userID); erro != nil {
-		return erro
+	if _, err = statement.Exec(user.Name, user.Nick, user.Email, userID); err != nil {
+		return err
 	}
 
 	return nil
@@ -136,14 +136,14 @@ func (r Users) Update(userID uint64, user models.User) error {
 
 // Delete removes the user with the received id from the database
 func (r Users) Delete(userID uint64) error {
-	statement, erro := r.db.Prepare("delete from users where id = ?")
-	if erro != nil {
-		return erro
+	statement, err := r.db.Prepare("delete from users where id = ?")
+	if err != nil {
+		return err
 	}
 	defer statement.Close()
 
-	if _, erro := statement.Exec(userID); erro != nil {
-		return erro
+	if _, err := statement.Exec(userID); err != nil {
+		return err
 	}
 
 	return nil

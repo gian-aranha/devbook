@@ -27,9 +27,9 @@ func CreateToken(userID uint64) (string, error) {
 // ValidateToken verifies if the token given in the request is valid
 func ValidateToken(r *http.Request) error {
 	tokenString := extractToken(r)
-	token, erro := jwt.Parse(tokenString, returnVerificationKey)
-	if erro != nil {
-		return erro
+	token, err := jwt.Parse(tokenString, returnVerificationKey)
+	if err != nil {
+		return err
 	}
 
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -42,15 +42,15 @@ func ValidateToken(r *http.Request) error {
 // ExtractUserID returns the id extracted from the token
 func ExtractUserID(r *http.Request) (uint64, error) {
 	tokenString := extractToken(r)
-	token, erro := jwt.Parse(tokenString, returnVerificationKey)
-	if erro != nil {
-		return 0, erro
+	token, err := jwt.Parse(tokenString, returnVerificationKey)
+	if err != nil {
+		return 0, err
 	}
 
 	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID, erro := strconv.ParseUint(fmt.Sprintf("%0.f", permissions["userId"]), 10, 64)
-		if erro != nil {
-			return 0, erro
+		userID, err := strconv.ParseUint(fmt.Sprintf("%0.f", permissions["userId"]), 10, 64)
+		if err != nil {
+			return 0, err
 		}
 
 		return userID, nil

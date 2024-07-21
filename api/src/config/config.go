@@ -22,14 +22,14 @@ var (
 
 // Load initializes the environment variables
 func Load() {
-	var erro error
+	var err error
 
-	if erro = godotenv.Load(); erro != nil {
-		log.Fatal(erro)
+	if err = godotenv.Load(); err != nil {
+		log.Fatal(err)
 	} 
 
-	Port, erro = strconv.Atoi(os.Getenv("API_PORT"))
-	if erro != nil {
+	Port, err = strconv.Atoi(os.Getenv("API_PORT"))
+	if err != nil {
 		Port = 9000
 	}
 

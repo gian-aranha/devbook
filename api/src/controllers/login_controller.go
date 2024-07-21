@@ -14,42 +14,42 @@ import (
 
 // Login is responsible for authenticating an user in the API
 func Login(w http.ResponseWriter, r *http.Request) {
-	requestBody, erro := io.ReadAll(r.Body)
-	if erro != nil {
-		responses.Error(w, http.StatusUnprocessableEntity, erro)
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		responses.Error(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var user models.User
 
-	if erro = json.Unmarshal(requestBody, &user); erro != nil {
-		responses.Error(w, http.StatusBadRequest, erro)
+	if err = json.Unmarshal(requestBody, &user); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	db, erro := database.Connect()
-	if erro != nil {
-		responses.Error(w, http.StatusInternalServerError, erro)
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
 
 	repository := repositories.NewUsersRepository(db)
 
-	databaseUser, erro := repository.GetByEmail(user.Email)
-	if erro != nil {
-		responses.Error(w, http.StatusInternalServerError, erro)
+	databaseUser, err := repository.GetByEmail(user.Email)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	if erro = security.VerifyPassword(databaseUser.Password, user.Password); erro != nil {
-		responses.Error(w, http.StatusUnauthorized, erro)
+	if err = security.VerifyPassword(databaseUser.Password, user.Password); err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
 		return
 	}
 
-	token, erro := authentication.CreateToken(databaseUser.ID)
-	if erro != nil {
-		responses.Error(w, http.StatusInternalServerError, erro)
+	token, err := authentication.CreateToken(databaseUser.ID)
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 	
