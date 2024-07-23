@@ -148,3 +148,20 @@ func (r Users) Delete(userID uint64) error {
 
 	return nil
 }
+
+// Follow add the userID and the follower ID to the followers table
+func (r Users) Follow(userID, followerID uint64) error {
+	statement, err := r.db.Prepare(
+		"insert ignore into followers (user_id, follower_id) values (?, ?)",
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(userID, followerID); err != nil {
+		return err
+	}
+
+	return nil
+}
