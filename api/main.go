@@ -12,7 +12,7 @@ func main() {
 	config.Load()
 	r := router.Generate()
 
-	fmt.Printf("API listening in port %d", config.Port)
+	fmt.Printf("API listening in port %d \n", config.Port)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
