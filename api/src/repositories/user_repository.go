@@ -75,7 +75,7 @@ func (r Users) Get(nameOrNick string) ([]models.User, error) {
 // GetByID returns a user that attends to the id received
 func (r Users) GetByID(userID uint64) (models.User, error) {
 	lines, err := r.db.Query(
-		"select id, name, nick, email, created_at from users where id=?",
+		"select id, name, nick, email, created_at from users where id = ?",
 		userID,
 	)
 	if err != nil {
@@ -179,4 +179,37 @@ func (r Users) Unfollow(userID, followerID uint64) error {
 	}
 
 	return nil
+}
+
+// GetFollowers returns all followers from the given user
+func (r Users) GetFollowers(userID uint64) ([]models.User, error) {
+	lines, err := r.db.Query(
+		`select u.id, u.name, u.nick, u.email, u.created_at from users 
+		u inner join followers s on u.id = s.follower_id where s.user_id = ?`,
+		 userID,
+	)
+	if err != nil {
+		return []models.User{}, err
+	}
+	defer lines.Close()
+
+	var users []models.User 
+
+	for lines.Next() {
+		var user models.User
+
+		if err = lines.Scan(
+			&user.ID,
+			&user.Name, 
+			&user.Nick,
+			&user.Email,
+			&user.CreatedAt,
+		); err != nil {
+			return []models.User{}, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }
