@@ -246,3 +246,37 @@ func (r Users) GetFollowing(userID uint64) ([]models.User, error) {
 
 	return users, nil
 }
+
+// GetPasswordByID gets a user password by his id
+func (r Users) GetPasswordByID(userID uint64) (string, error) {
+	line, err := r.db.Query("select password from users where id = ?", userID)
+	if err != nil {
+		return "", err
+	}
+	defer line.Close()
+
+	var user models.User
+
+	if line.Next() {
+		if err = line.Scan(&user.Password); err != nil {
+			return "", err
+		}
+	}
+
+	return user.Password, nil
+}
+
+// UpdatePassword updates the user password based on the provided id
+func (r Users) UpdatePassword(userID uint64, password string) error {
+	statement, err := r.db.Prepare("update users set password = ? where id = ?")
+	if err != nil {
+		return nil
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(password, userID); err != nil {
+		return err
+	}
+
+	return nil
+}
