@@ -28,7 +28,6 @@ CREATE TABLE posts(
     content varchar(300) not null,
     author_id int not null,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-    author_nick varchar(50) not null,
     likes int default 0,
     created_at timestamp default current_timestamp
 ) ENGINE=INNODB;

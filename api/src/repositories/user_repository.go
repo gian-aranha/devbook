@@ -72,21 +72,21 @@ func (r Users) Get(nameOrNick string) ([]models.User, error) {
 	return users, nil
 }
 
-// GetByID returns a user that attends to the id received
+// GetByID returns a user that attends to the received id
 func (r Users) GetByID(userID uint64) (models.User, error) {
-	lines, err := r.db.Query(
+	line, err := r.db.Query(
 		"select id, name, nick, email, created_at from users where id = ?",
 		userID,
 	)
 	if err != nil {
 		return models.User{}, err
 	}
-	defer lines.Close()
+	defer line.Close()
 
 	var user models.User
 
-	if lines.Next() {
-		if err = lines.Scan(
+	if line.Next() {
+		if err = line.Scan(
 			&user.ID,
 			&user.Name,
 			&user.Nick,
