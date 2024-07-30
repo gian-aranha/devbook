@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 // Post represents a post in the application
 type Post struct {
@@ -13,3 +17,30 @@ type Post struct {
 	CreatedAt  time.Time `json:"createAt,omitempty"`
 }
 
+// Prepare calls validate and format methods to act uppon the received post
+func (post *Post) Prepare() error {
+	if err := post.validate(); err != nil {
+		return err
+	}
+
+	post.format()
+
+	return nil
+}
+
+func (post *Post) validate() error {
+	if post.Title == "" {
+		return errors.New("the title is mandatory and can't be blank")
+	}
+
+	if post.Content == "" {
+		return errors.New("the content is mandatory and can't be blank")
+	}
+
+	return nil
+}
+
+func (post *Post) format() {
+	post.Title = strings.TrimSpace(post.Title)
+	post.Content = strings.TrimSpace(post.Content)
+}
