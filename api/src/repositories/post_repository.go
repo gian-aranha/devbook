@@ -3,7 +3,6 @@ package repositories
 import (
 	"api/src/models"
 	"database/sql"
-	"errors"
 )
 
 // Posts represents a posts repository
@@ -38,8 +37,41 @@ func (r Posts) Create(post models.Post) (uint64, error) {
 }
 
 // Get returns all posts of users that the logged user follows
-func (r Posts) Get() ([]models.Post, error) {
-	return []models.Post{}, errors.New("error")
+func (r Posts) Get(userID uint64) ([]models.Post, error) {
+	lines, err := r.db.Query(`
+		select distinct p.*, u.nick from posts p
+		inner join users u on p.author_id = u.id
+		inner join followers f on p.author_id = f.user_id
+		where u.id = ? or f.follower_id = ?`,
+		userID, 
+		userID,
+	)
+	if err != nil {
+		return []models.Post{}, err
+	}
+	defer lines.Close()
+
+	var posts []models.Post
+
+	for lines.Next() {
+		var post models.Post
+
+		if err = lines.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorID,
+			&post.Likes,
+			&post.CreatedAt,
+			&post.AuthorNick,
+		); err != nil {
+			return []models.Post{}, err
+		}
+
+		posts = append(posts, post)
+	}
+
+	return posts, nil
 }
 
 // GetByID returns a post that attends to the received id 
