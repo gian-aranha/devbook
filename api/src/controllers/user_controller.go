@@ -194,7 +194,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusNoContent, nil)
-
 }
 
 // FollowUser allows a user to follow another
@@ -231,7 +230,6 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusNoContent, nil)
-
 }
 
 // UnfollowUser allows a user to unfollow another
@@ -268,7 +266,6 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, http.StatusNoContent, nil)
-
 }
 
 // GetUserFollowers gets all followers from the given user
@@ -323,7 +320,7 @@ func GetUserFollowing(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, followedUsers)
 }
 
-// UpdatePassword updates the user password
+// UpdateUserPassword updates the user password
 func UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 	tokenUserID, err := authentication.ExtractUserID(r)
 	if err != nil {
