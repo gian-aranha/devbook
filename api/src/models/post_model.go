@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Post represents a post in the application
 type Post struct {
 	ID         uint64 `json:"id,omitempty"`
 	Title      string `json:"title,omitempty"`
@@ -11,3 +12,4 @@ type Post struct {
 	Likes      uint64 `json:"likes"`
 	CreatedAt  time.Time `json:"createAt,omitempty"`
 }
+
