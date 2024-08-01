@@ -1,4 +1,4 @@
-# devbook
+# devbook - API
 
 Devbook is a project that simulates a social network. It has two main parts, an Rest API that runs the program logic, and an CLI that makes possible the execution of all the functions of the project.
 
