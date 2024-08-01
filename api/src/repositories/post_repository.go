@@ -188,7 +188,14 @@ func (r Posts) Like(postID uint64) error {
 
 // Unlike removes a like from the post with the received id
 func (r Posts) Unlike(postID uint64) error {
-	statement, err := r.db.Prepare("update posts set likes = likes - 1 where id = ?")
+	statement, err := r.db.Prepare(`
+		update posts set likes = 
+		case 
+			when likes > 0 then likes - 1
+			else 0 
+		end
+		where id = ?`,
+	)
 	if err != nil {
 		return err
 	}
