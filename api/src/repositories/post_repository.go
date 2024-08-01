@@ -170,3 +170,33 @@ func (r Posts) Delete(postID uint64) error {
 
 	return nil
 }
+
+// Like adds a like to the post with the received id
+func (r Posts) Like(postID uint64) error {
+	statement, err := r.db.Prepare("update posts set likes = likes + 1 where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(postID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Unlike removes a like from the post with the received id
+func (r Posts) Unlike(postID uint64) error {
+	statement, err := r.db.Prepare("update posts set likes = likes - 1 where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(postID); err != nil {
+		return err
+	}
+
+	return nil
+}
