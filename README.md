@@ -11,8 +11,10 @@ DB_USER=<your-username>
 DB_PASSWORD=<your-password>
 ```
 
-To run the API is simple, you can go to `/devbook/api/src/` directory and build the binaries from the application. For that just run the command bellow.
+To run the API is simple, you can go to `/devbook/api/src/` directory and run the command bellow.
 
 ```bash
 go run main.go
 ```
+
+For now the API can be tested from Postman, Insomnia or any program you prefer. The CLI is not ready yet, but will be developed the as quickly as possible.
