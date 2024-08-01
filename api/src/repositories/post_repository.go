@@ -104,3 +104,69 @@ func (r Posts) GetByID(postID uint64) (models.Post, error) {
 
 	return post, nil
 }
+
+// GetByUserID returns all posts from the user who attends to the received id
+func (r Posts) GetByUserID(userID uint64) ([]models.Post, error) {
+	lines, err := r.db.Query(`
+		select p.*, u.nick from posts p
+		inner join users u on p.author_id = u.id
+		where p.author_id = ?`,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer lines.Close()
+
+	var posts []models.Post
+
+	for lines.Next() {
+		var post models.Post
+
+		if err = lines.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorID,
+			&post.Likes,
+			&post.CreatedAt,
+			&post.AuthorNick,
+		); err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
+// Update alters the post information in the database
+func (r Posts) Update(postID uint64, post models.Post) error {
+	statement, err := r.db.Prepare("update posts set title = ?, content = ? where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(post.Title, post.Content, postID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete removes the post with the received id from the database
+func (r Posts) Delete(postID uint64) error {
+	statement, err := r.db.Prepare("delete from posts where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(postID); err != nil {
+		return err
+	}
+
+	return nil
+}
