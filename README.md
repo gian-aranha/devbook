@@ -17,4 +17,14 @@ To run the API is simple, you can go to `/devbook/api/src/` directory and run th
 go run main.go
 ```
 
+Or, if you prefer you can build the binaries and execute the project.
+
+```bash
+    # build
+    go build .
+
+    # execute
+    ./api
+```
+
 For now the API can be tested from Postman, Insomnia or any program you prefer. The CLI is not ready yet, but will be developed the as quickly as possible.
