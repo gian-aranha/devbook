@@ -2,7 +2,7 @@
 
 Devbook is a project that simulates a social network. It has two main parts, an Rest API that runs the program logic, and an CLI that makes possible the execution of all the functions of the project.
 
-First, to be able to test all the functionalities, you need to configure the database to already have some data. For that I create two files, `sql.sql` (creates the database and it's tables) and `data.sql` (add some data to the tables that were just created). Both files can be found in `devbook/api/sql`
+First, to be able to test all the functionalities, you need to configure the database to already have some data. For that I created two files, `sql.sql` (creates the database and it's tables) and `data.sql` (add some data to the tables that were just created). Both files can be found in `devbook/api/sql`
 
 The database used in this project is MySQL, so you'll have to install it. You also need to create an user and a password for this user. Don't forget to change the first to lines of the file `devbook/api/.env`, because, otherwise the database won't work.
 
