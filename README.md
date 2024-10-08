@@ -1,4 +1,4 @@
-# devbook 
+# DevBook 
 
 Devbook is a project that simulates a social network. It has two main parts, a Rest API and a WEB interface. 
 
